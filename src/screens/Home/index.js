@@ -78,9 +78,9 @@ export default class Home extends Component {
   };
 
   onGetFooter() {
-    const { loading } = this.state;
+    const { nextPage } = this.state;
 
-    if (!loading) {
+    if (nextPage === null) {
       return null;
     }
 
@@ -92,7 +92,6 @@ export default class Home extends Component {
 
     return (
       <RefreshControl
-        size="large"
         colors={[colorPrimary]}
         tintColor={colorPrimary}
         onRefresh={this.onRefresh}

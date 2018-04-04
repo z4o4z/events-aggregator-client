@@ -2,4 +2,4 @@
 
 export default (process.env.REACT_NATIVE_STORYBOOK
   ? require('./storybook').default
-  : require('./src').defaut);
+  : require('./src').default);
