@@ -2,25 +2,27 @@
   "name": "events-aggregator",
   "version": "0.0.1",
   "devDependencies": {
-    "react-native-scripts": "1.13.1",
-    "jest-expo": "26.0.0",
-    "react-test-renderer": "16.3.0",
+    "@storybook/addon-actions": "^3.4.0",
+    "@storybook/addon-knobs": "^3.4.0",
+    "@storybook/addon-links": "^3.4.0",
+    "@storybook/addons": "^3.4.0",
+    "@storybook/react-native": "^3.4.0",
+    "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.2",
+    "babel-plugin-transform-inline-environment-variables": "^0.3.0",
+    "babel-runtime": "^6.26.0",
+    "cross-env": "^5.1.4",
     "eslint": "^4.19.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^7.7.0",
+    "jest-expo": "26.0.0",
     "prettier": "^1.11.1",
-    "@storybook/react-native": "^3.4.0",
-    "@storybook/addon-actions": "^3.4.0",
-    "@storybook/addon-links": "^3.4.0",
-    "@storybook/addons": "^3.4.0",
-    "babel-core": "^6.26.0",
-    "babel-runtime": "^6.26.0",
     "react-dom": "16.3.0",
-    "prop-types": "^15.6.1"
+    "react-native-scripts": "1.13.1",
+    "react-test-renderer": "16.3.0"
   },
   "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
   "scripts": {
@@ -29,13 +31,17 @@
     "android": "react-native-scripts android",
     "ios": "react-native-scripts ios",
     "test": "jest",
-    "storybook": "storybook start -p 7007"
+    "storybook": "storybook start -p 7007",
+    "storybook:ios": "cross-env REACT_NATIVE_STORYBOOK=true npm run ios",
+    "storybook:android": "cross-env REACT_NATIVE_STORYBOOK=true npm run android"
   },
   "jest": {
     "preset": "jest-expo"
   },
   "dependencies": {
     "expo": "^26.0.0",
+    "moment": "^2.22.0",
+    "prop-types": "^15.6.1",
     "react": "16.3.0",
     "react-native": "0.54.0",
     "react-navigation": "^1.5.9",
