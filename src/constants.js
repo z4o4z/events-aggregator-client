@@ -2,6 +2,8 @@ import { Platform, Dimensions } from 'react-native';
 
 const window = Dimensions.get('window');
 
+export const DATA_ENDPOINT = 'http://events-aggregator-workshop.anadea.co:8080';
+
 export const IS_IOS = Platform.OS === 'ios';
 export const IS_ANDROID = Platform.OS === 'android';
 

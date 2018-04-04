@@ -1,14 +1,31 @@
 import React from 'react';
 import moment from 'moment';
 import PropTypes from 'prop-types';
+import { Animated } from 'react-native';
 
+import Button from '../../../../components/Button';
 import BackgroundImage from '../../../../components/BackgroundImage';
 import BackgroundColor from '../../../../components/BackgroundColor';
 
 import { Date, Title, Header, Footer, Wrapper } from './styles';
 
+const AnimatedBackgroundImage = Animated.createAnimatedComponent(BackgroundImage);
+
 export default function Item(props) {
-  const { src, title, startTime, startDate, finishTime, finishDate } = props;
+  const {
+    id,
+    src,
+    title,
+    index,
+    height,
+    onClick,
+    startTime,
+    startDate,
+    finishTime,
+    finishDate,
+    windowHeight,
+    animatedScrollY,
+  } = props;
 
   const startDateMoment = moment(startDate);
   const finishDateMoment = moment(finishDate);
@@ -27,29 +44,46 @@ export default function Item(props) {
     date += `${startDateMoment.format('D MMMM')}`;
   }
 
+  const translateY = animatedScrollY.interpolate({
+    inputRange: [(index - 1) * height, (index + 1) * height + windowHeight],
+    outputRange: [-30, 30],
+    extrapolate: 'clamp',
+  });
+
   return (
-    <Wrapper>
-      <BackgroundImage src={src} />
-      <BackgroundColor color="rgba(93, 83, 73, 0.5)" />
+    <Button onClick={() => onClick(id)}>
+      <Wrapper height={height} innerRef={this.onRef} onLayout={this.onLayout}>
+        <AnimatedBackgroundImage
+          src={src}
+          style={{ transform: [{ translateY }, { scale: 1.4 }] }}
+        />
+        <BackgroundColor color="rgba(93, 83, 73, 0.5)" />
 
-      <Header>
-        <Date>{date.toUpperCase()}</Date>
-      </Header>
+        <Header>
+          <Date>{date.toUpperCase()}</Date>
+        </Header>
 
-      <Footer>
-        <Title>{title}</Title>
-      </Footer>
-    </Wrapper>
+        <Footer>
+          <Title>{title}</Title>
+        </Footer>
+      </Wrapper>
+    </Button>
   );
 }
 
 Item.propTypes = {
+  id: PropTypes.string.isRequired,
   src: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+  onClick: PropTypes.func.isRequired,
   startTime: PropTypes.string,
   startDate: PropTypes.string.isRequired,
   finishTime: PropTypes.string,
   finishDate: PropTypes.string.isRequired,
+  windowHeight: PropTypes.number.isRequired,
+  animatedScrollY: PropTypes.instanceOf(Animated.Value).isRequired,
 };
 
 Item.defaultProps = {
