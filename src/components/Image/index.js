@@ -11,13 +11,15 @@ function Image(props) {
 
   const height = props.height || width * IMAGE_RATIO;
 
+  const uri = src[0] === '/' ? `https://events.dev.by${src}` : src;
+
   return (
     <StyledImage
       {...selfProps}
       wdth={width}
       hght={height}
       style={style}
-      source={path || { uri: props.src }}
+      source={path || { uri }}
       radius={radius}
     />
   );
