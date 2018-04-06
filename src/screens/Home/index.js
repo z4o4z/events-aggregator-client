@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Animated, Dimensions, RefreshControl } from 'react-native';
+import { Animated, RefreshControl } from 'react-native';
 
 import { IMAGE_RATIO, DATA_ENDPOINT, WINDOW_HEIGHT, WINDOW_WIDTH } from '../../constants';
 import { colorPrimary } from '../../styles';
@@ -54,9 +54,7 @@ export default class Home extends Component {
     { useNativeDriver: true }
   );
 
-  onLayout = () => {
-    const { width, height } = Dimensions.get('window');
-
+  onLayout = ({ nativeEvent: { layout: { width, height } } }) => {
     const itemHeight = width * IMAGE_RATIO;
 
     this.setState({
