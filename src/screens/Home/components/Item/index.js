@@ -1,13 +1,13 @@
 import React from 'react';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import { Animated } from 'react-native';
 
 import Button from '../../../../components/Button';
+import DateTime from '../../../../components/DateTime';
 import BackgroundImage from '../../../../components/BackgroundImage';
 import BackgroundColor from '../../../../components/BackgroundColor';
 
-import { Date, Title, Header, Footer, Wrapper } from './styles';
+import { Title, Header, Footer, Wrapper } from './styles';
 
 const AnimatedBackgroundImage = Animated.createAnimatedComponent(BackgroundImage);
 
@@ -27,23 +27,6 @@ export default function Item(props) {
     animatedScrollY,
   } = props;
 
-  const startDateMoment = moment(startDate);
-  const finishDateMoment = moment(finishDate);
-  const startDay = startDateMoment.format('D');
-  const startMonth = startDateMoment.format('MMMM');
-  const finishDay = startDateMoment.format('D');
-  const finishMonth = finishDateMoment.format('MMMM');
-
-  let date = `${startTime} ${finishTime && finishTime !== '00:00' ? `- ${finishTime} ` : ''}`;
-
-  if (startMonth !== finishMonth) {
-    date += `${startDateMoment.format('D MMMM')} - ${finishDateMoment.format('D MMMM')}`;
-  } else if (startDay !== finishDay) {
-    date += `${startDay} - ${finishDateMoment.format('D MMMM')}`;
-  } else {
-    date += `${startDateMoment.format('D MMMM')}`;
-  }
-
   const translateY = animatedScrollY.interpolate({
     inputRange: [(index - 1) * height, (index + 1) * height + windowHeight],
     outputRange: [-30, 30],
@@ -60,7 +43,12 @@ export default function Item(props) {
         <BackgroundColor color="rgba(93, 83, 73, 0.5)" />
 
         <Header>
-          <Date>{date.toUpperCase()}</Date>
+          <DateTime
+            startDate={startDate}
+            startTime={startTime}
+            finishTime={finishTime}
+            finishDate={finishDate}
+          />
         </Header>
 
         <Footer>

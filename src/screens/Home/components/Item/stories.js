@@ -13,7 +13,7 @@ storiesOf('screens/Home/Item', module)
   .addDecorator(withKnobs)
   .add('base', () => (
     <Item
-      id={text('id', '123')}
+      id={text('id', '5ac3724e5bf284001a96eda5')}
       src={text('src', 'https://picsum.photos/600/400?uri=/trening-professional-scrum-master--2?0')}
       index={number('index', 0)}
       title={text('title', 'Тренинг Professional Scrum Master')}
