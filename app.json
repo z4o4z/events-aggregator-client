@@ -9,7 +9,8 @@
       "bundleIdentifier": "com.webspace.belarusianitevents"
     },
     "android": {
-      "package": "com.webspace.belarusianitevents"
+      "package": "com.webspace.belarusianitevents",
+      "permissions": []
     }
   }
 }
