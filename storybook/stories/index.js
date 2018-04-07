@@ -10,3 +10,4 @@ import '../../src/components/BackgroundImage/stories';
 import '../../src/screens/Home/stories';
 import '../../src/screens/Home/components/Item/stories';
 import '../../src/screens/Event/stories';
+import '../../src/screens/Event/components/Content/stories';

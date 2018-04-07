@@ -1,39 +1,50 @@
 import React, { Fragment, Component } from 'react';
-import HTMLView from 'react-native-htmlview';
 import PropTypes from 'prop-types';
-import { Animated } from 'react-native';
+import { Share, Linking } from 'react-native';
 
-import { colorPrimary } from '../../styles';
 import { IMAGE_RATIO, DATA_ENDPOINT, WINDOW_WIDTH } from '../../constants';
 
-import Loader from '../../components/Loader';
+import Button from '../../components/Button';
 import DateTime from '../../components/DateTime';
 import BackgroundImage from '../../components/BackgroundImage';
 import BackgroundColor from '../../components/BackgroundColor';
 
-import Content from './Content';
+import Content from './components/Content';
 
-import { Scroll, Header } from './styles';
+import {
+  Price,
+  Scroll,
+  Header,
+  Address,
+  IconBack,
+  Bacground,
+  Foreground,
+  HeaderBackground,
+} from './styles';
 
 export default class Event extends Component {
   static propTypes = {
-    id: PropTypes.string.isRequired,
-    src: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    address: PropTypes.string.isRequired,
-    startTime: PropTypes.string,
-    startDate: PropTypes.string.isRequired,
-    finishTime: PropTypes.string,
-    finishDate: PropTypes.string.isRequired,
+    navigation: PropTypes.shape({
+      state: PropTypes.shape({
+        params: PropTypes.shape({
+          id: PropTypes.string.isRequired,
+          src: PropTypes.string.isRequired,
+          title: PropTypes.string.isRequired,
+          address: PropTypes.string,
+          startTime: PropTypes.string,
+          startDate: PropTypes.string.isRequired,
+          finishTime: PropTypes.string,
+          finishDate: PropTypes.string.isRequired,
+        }).isRequired,
+      }).isRequired,
+      goBack: PropTypes.func.isRequired,
+    }).isRequired,
   };
 
   state = {
-    geo: null,
-    tags: null,
     link: null,
     price: null,
     content: null,
-    phoneNumber: null,
     parallaxHeight: WINDOW_WIDTH * IMAGE_RATIO,
   };
 
@@ -47,8 +58,27 @@ export default class Event extends Component {
     });
   };
 
+  onShare = () => {
+    const { link, title } = this.state;
+
+    Share.share({
+      title,
+      message: link,
+    });
+  };
+
+  onOpenLink = href => {
+    Linking.openURL(href);
+  };
+
+  onOpenInBrowser = () => {
+    const { link } = this.state;
+
+    Linking.openURL(link);
+  };
+
   async fetchEvent() {
-    const { id } = this.props;
+    const { id } = this.props.navigation.state.params;
 
     const res = await global.fetch(`${DATA_ENDPOINT}/events/${id}`);
 
@@ -58,15 +88,27 @@ export default class Event extends Component {
       link: event.link,
       price: event.price,
       content: event.content,
-      phoneNumber: event.phone_number,
     });
   }
 
-  headerRenderer = () => {
-    const { startTime, startDate, finishTime, finishDate } = this.props;
+  headerRenderer = ({ height, animatedValue }) => {
+    const { parallaxHeight } = this.state;
+    const { startTime, startDate, finishTime, finishDate } = this.props.navigation.state.params;
+
+    const opacity = animatedValue.interpolate({
+      inputRange: [0, parallaxHeight - height],
+      outputRange: [0, 1],
+      extrapolate: 'clamp',
+    });
 
     return (
-      <Header pointerEvents="none">
+      <Header pointerEvents="box-none">
+        <HeaderBackground style={{ opacity }} pointerEvents="none" />
+
+        <Button onPress={() => this.props.navigation.goBack()} touchedScale={0.8}>
+          <IconBack />
+        </Button>
+
         <DateTime
           startDate={startDate}
           startTime={startTime}
@@ -78,7 +120,7 @@ export default class Event extends Component {
   };
 
   parallaxBackgroundRenderer = () => {
-    const { src } = this.props;
+    const { src } = this.props.navigation.state.params;
 
     return (
       <Fragment>
@@ -88,22 +130,47 @@ export default class Event extends Component {
     );
   };
 
+  parallaxForegroundRenderer = () => {
+    const { price } = this.state;
+    const { address } = this.props.navigation.state.params;
+
+    return (
+      <Foreground>
+        <Price>{price}</Price>
+        <Address>{address}</Address>
+      </Foreground>
+    );
+  };
+
   render() {
+    const { title, address } = this.props.navigation.state.params;
     const { content, parallaxHeight } = this.state;
 
     return (
-      <Scroll
-        width="100%"
-        height="100%"
-        headerHeight={parallaxHeight}
-        useNativeDriver
-        onLayout={this.onLayout}
-        parallaxHeight={parallaxHeight}
-        renderHeader={this.headerRenderer}
-        renderParallaxBackground={this.parallaxBackgroundRenderer}
-      >
-        {content === null ? <Loader /> : <Content html={content} />}
-      </Scroll>
+      <Bacground>
+        <Scroll
+          width="100%"
+          height="100%"
+          headerHeight={70}
+          isHeaderFixed
+          useNativeDriver
+          onLayout={this.onLayout}
+          renderHeader={this.headerRenderer}
+          parallaxHeight={parallaxHeight}
+          renderParallaxBackground={this.parallaxBackgroundRenderer}
+          renderParallaxForeground={this.parallaxForegroundRenderer}
+          parallaxForegroundScrollSpeed={0.8}
+        >
+          <Content
+            html={content}
+            title={title}
+            address={address}
+            onShare={this.onShare}
+            onOpenLink={this.onOpenLink}
+            onOpenInBrowser={this.onOpenInBrowser}
+          />
+        </Scroll>
+      </Bacground>
     );
   }
 }

@@ -22,12 +22,17 @@ export default function DateTime({ startDate, startTime, finishDate, finishTime 
     dateTime += `${startDateMoment.format('D MMMM')}`;
   }
 
-  return <StyledText>{dateTime}</StyledText>;
+  return <StyledText pointerEvents="none">{dateTime}</StyledText>;
 }
 
 DateTime.propTypes = {
-  startTime: PropTypes.string.isRequired,
+  startTime: PropTypes.string,
   startDate: PropTypes.string.isRequired,
-  finishTime: PropTypes.string.isRequired,
+  finishTime: PropTypes.string,
   finishDate: PropTypes.string.isRequired,
+};
+
+DateTime.defaultProps = {
+  startTime: '',
+  finishTime: '',
 };

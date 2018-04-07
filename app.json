@@ -1,5 +1,15 @@
 {
   "expo": {
-    "sdkVersion": "26.0.0"
+    "sdkVersion": "26.0.0",
+    "name": "Belarusian IT events",
+    "icon": "./src/icon.png",
+    "version": "1.0.0",
+    "slug": "belarusian-it-events",
+    "ios": {
+      "bundleIdentifier": "com.webspace.belarusianitevents"
+    },
+    "android": {
+      "package": "com.webspace.belarusianitevents"
+    }
   }
 }

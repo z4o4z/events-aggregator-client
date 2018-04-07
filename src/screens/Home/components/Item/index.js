@@ -18,7 +18,7 @@ export default function Item(props) {
     title,
     index,
     height,
-    onClick,
+    onPress,
     startTime,
     startDate,
     finishTime,
@@ -34,7 +34,7 @@ export default function Item(props) {
   });
 
   return (
-    <Button onClick={() => onClick(id)}>
+    <Button onPress={() => onPress(id)}>
       <Wrapper height={height} innerRef={this.onRef} onLayout={this.onLayout}>
         <AnimatedBackgroundImage
           src={src}
@@ -65,7 +65,7 @@ Item.propTypes = {
   title: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
-  onClick: PropTypes.func.isRequired,
+  onPress: PropTypes.func.isRequired,
   startTime: PropTypes.string,
   startDate: PropTypes.string.isRequired,
   finishTime: PropTypes.string,

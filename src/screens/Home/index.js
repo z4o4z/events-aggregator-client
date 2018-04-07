@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Animated, RefreshControl } from 'react-native';
 
 import { IMAGE_RATIO, DATA_ENDPOINT, WINDOW_HEIGHT, WINDOW_WIDTH } from '../../constants';
@@ -8,9 +9,15 @@ import Loader from '../../components/Loader';
 
 import Item from './components/Item';
 
-import { Scroll, FooterLoader } from './styles';
+import { Scroll, Bacground, FooterLoader } from './styles';
 
 export default class Home extends Component {
+  static propTypes = {
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func.isRequired,
+    }).isRequired,
+  };
+
   static async fetchEventsByPage(page = 0) {
     const res = await global.fetch(`${DATA_ENDPOINT}/events?page=${page}`);
 
@@ -75,6 +82,23 @@ export default class Home extends Component {
     await this.fetchAndSetInialEvents();
   };
 
+  onItemPress = id => {
+    const { navigation } = this.props;
+
+    const item = this.state.events.find(event => event._id === id);
+
+    navigation.navigate('Event', {
+      id,
+      src: item.hero_image_url,
+      title: item.title,
+      address: item.address,
+      startTime: item.start_time,
+      startDate: item.start_date,
+      finishTime: item.finish_time,
+      finishDate: item.finish_date,
+    });
+  };
+
   onGetFooter() {
     const { nextPage } = this.state;
 
@@ -120,7 +144,7 @@ export default class Home extends Component {
         index={index}
         title={item.title}
         height={itemHeight}
-        onClick={this.onItemClick}
+        onPress={this.onItemPress}
         startTime={item.start_time}
         startDate={item.start_date}
         finishTime={item.finish_time}
@@ -135,20 +159,22 @@ export default class Home extends Component {
     const { events } = this.state;
 
     return (
-      <Scroll
-        data={events}
-        onScroll={this.onScroll}
-        onLayout={this.onLayout}
-        renderItem={this.itemRenderer}
-        keyExtractor={this.keyExtractor}
-        onEndReached={this.onEndReached}
-        getItemLayout={this.onGetItemLayout}
-        refreshControl={this.onGetRefreshControl()}
-        ListEmptyComponent={Loader}
-        ListFooterComponent={this.onGetFooter()}
-        scrollEventThrottle={16}
-        onEndReachedThreshold={1}
-      />
+      <Bacground>
+        <Scroll
+          data={events}
+          onScroll={this.onScroll}
+          onLayout={this.onLayout}
+          renderItem={this.itemRenderer}
+          keyExtractor={this.keyExtractor}
+          onEndReached={this.onEndReached}
+          getItemLayout={this.onGetItemLayout}
+          refreshControl={this.onGetRefreshControl()}
+          ListEmptyComponent={Loader}
+          ListFooterComponent={this.onGetFooter()}
+          scrollEventThrottle={16}
+          onEndReachedThreshold={1}
+        />
+      </Bacground>
     );
   }
 }
