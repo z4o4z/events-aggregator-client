@@ -42,6 +42,7 @@ export default class Event extends Component {
   };
 
   state = {
+    geo: {},
     link: null,
     price: null,
     content: null,
@@ -85,6 +86,7 @@ export default class Event extends Component {
     const event = await res.json();
 
     this.setState({
+      geo: event.geo,
       link: event.link,
       price: event.price,
       content: event.content,
@@ -144,7 +146,9 @@ export default class Event extends Component {
 
   render() {
     const { title, address } = this.props.navigation.state.params;
-    const { content, parallaxHeight } = this.state;
+    const { geo, content, parallaxHeight } = this.state;
+
+    console.log(geo);
 
     return (
       <Bacground>
@@ -162,6 +166,7 @@ export default class Event extends Component {
           parallaxForegroundScrollSpeed={0.8}
         >
           <Content
+            geo={geo}
             html={content}
             title={title}
             address={address}

@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import HTML from 'react-native-render-html';
+import { MapView } from 'expo';
 import PropTypes from 'prop-types';
 
 import Button from '../../../../components/Button';
@@ -14,6 +15,10 @@ import { Share, Title, WebLink, Header, Wrapper, ImageWrapper, RemovePadding } f
 
 export default class Content extends PureComponent {
   static propTypes = {
+    geo: PropTypes.shape({
+      latitude: PropTypes.string,
+      longitude: PropTypes.string,
+    }).isRequired,
     html: PropTypes.string,
     title: PropTypes.string.isRequired,
     onShare: PropTypes.func.isRequired,
@@ -103,7 +108,11 @@ export default class Content extends PureComponent {
   };
 
   render() {
-    const { title, html: htmlContent, onShare, onOpenLink, onOpenInBrowser } = this.props;
+    const { geo, title, html: htmlContent, onShare, onOpenLink, onOpenInBrowser } = this.props;
+    const coordinate = {
+      latitude: parseFloat(geo.longitude),
+      longitude: parseFloat(geo.latitude),
+    };
 
     return (
       <Wrapper>
@@ -134,6 +143,24 @@ export default class Content extends PureComponent {
         ) : (
           <Loader />
         )}
+
+        {!!geo.latitude &&
+          !!geo.longitude && (
+            <RemovePadding large>
+              <ImageWrapper>
+                <MapView
+                  style={{ flex: 1 }}
+                  initialRegion={{
+                    ...coordinate,
+                    latitudeDelta: 0.0043,
+                    longitudeDelta: 0.0034,
+                  }}
+                >
+                  <MapView.Marker coordinate={coordinate} />
+                </MapView>
+              </ImageWrapper>
+            </RemovePadding>
+          )}
       </Wrapper>
     );
   }

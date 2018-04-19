@@ -10,6 +10,11 @@
     },
     "android": {
       "package": "com.webspace.belarusianitevents",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAR7M4OOntC16YbkmtEXbfcyCRGt8P7XUg"
+        }
+      },
       "permissions": []
     }
   }

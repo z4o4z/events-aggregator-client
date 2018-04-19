@@ -38,7 +38,7 @@ export const Share = WebLink.extend`
 export const RemovePadding = styled.View`
   padding-left: 100%;
   padding-right: 20px;
-  padding-top: ${100 * IMAGE_RATIO}%;
+  padding-top: ${({ large }) => 100 * IMAGE_RATIO * (large ? 1.5 : 1)}%;
 `;
 
 export const ImageWrapper = styled.View`
