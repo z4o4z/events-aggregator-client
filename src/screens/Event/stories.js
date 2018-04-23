@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 import React from 'react';
+import { linkTo } from '@storybook/addon-links';
 import { storiesOf } from '@storybook/react-native';
 import { text, withKnobs } from '@storybook/addon-knobs';
 
@@ -26,6 +27,7 @@ storiesOf('screens/Event', module)
             finishDate: text('finishDate', '2018-05-08T00:00:00.000Z'),
           },
         },
+        goBack: linkTo('screens/Home', 'base'),
       }}
     />
   ));
