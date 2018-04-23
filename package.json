@@ -4,7 +4,7 @@
   "devDependencies": {
     "@storybook/addon-actions": "^3.4.0",
     "@storybook/addon-knobs": "^3.4.0",
-    "@storybook/addon-links": "^3.4.0",
+    "@storybook/addon-links": "^3.4.2",
     "@storybook/addons": "^3.4.0",
     "@storybook/react-native": "^3.4.0",
     "babel-core": "^6.26.0",
@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^6.3.1",
-    "@monterosa/react-native-parallax-scroll": "^1.6.0",
+    "@monterosa/react-native-parallax-scroll": "^1.8.0",
     "expo": "^26.0.0",
     "moment": "^2.22.0",
     "prop-types": "^15.6.1",
