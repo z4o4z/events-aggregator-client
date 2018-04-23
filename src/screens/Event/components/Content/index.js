@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import HTML from 'react-native-render-html';
-import { MapView } from 'expo';
 import PropTypes from 'prop-types';
+import { MapView } from 'expo';
 
 import Button from '../../../../components/Button';
 import Loader from '../../../../components/Loader';
@@ -141,7 +141,11 @@ export default class Content extends PureComponent {
             allowedStyles={[]}
           />
         ) : (
-          <Loader />
+          <RemovePadding large>
+            <ImageWrapper>
+              <Loader />
+            </ImageWrapper>
+          </RemovePadding>
         )}
 
         {!!geo.latitude &&

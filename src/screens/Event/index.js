@@ -1,8 +1,9 @@
 import React, { Fragment, Component } from 'react';
 import PropTypes from 'prop-types';
-import { Share, Linking } from 'react-native';
+import { Alert, Share, Linking } from 'react-native';
 
-import { IMAGE_RATIO, DATA_ENDPOINT, WINDOW_WIDTH } from '../../constants';
+import storage from '../../libs/storage';
+import { IMAGE_RATIO, WINDOW_WIDTH } from '../../constants';
 
 import Button from '../../components/Button';
 import DateTime from '../../components/DateTime';
@@ -50,7 +51,7 @@ export default class Event extends Component {
   };
 
   componentDidMount() {
-    this.fetchEvent();
+    this.onFetchEvent();
   }
 
   onLayout = ({ nativeEvent: { layout: { width } } }) => {
@@ -78,20 +79,33 @@ export default class Event extends Component {
     Linking.openURL(link);
   };
 
-  async fetchEvent() {
+  onFetchEvent = async () => {
     const { id } = this.props.navigation.state.params;
 
-    const res = await global.fetch(`${DATA_ENDPOINT}/events/${id}`);
+    try {
+      const event = await storage.load({
+        id,
+        key: 'event',
+      });
 
-    const event = await res.json();
-
-    this.setState({
-      geo: event.geo,
-      link: event.link,
-      price: event.price,
-      content: event.content,
-    });
-  }
+      this.setState({
+        geo: event.geo,
+        link: event.link,
+        price: event.price,
+        content: event.content,
+      });
+    } catch (err) {
+      Alert.alert(
+        'Ууупс, ошибка при загрузке ивента',
+        'Попробовать ещё раз?',
+        [
+          { text: 'Назад', onPress: this.props.navigation.goBack },
+          { text: 'Да', onPress: this.onFetchEvent },
+        ],
+        { cancelable: false }
+      );
+    }
+  };
 
   headerRenderer = ({ height, animatedValue }) => {
     const { parallaxHeight } = this.state;

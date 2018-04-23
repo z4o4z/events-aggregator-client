@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Animated, RefreshControl } from 'react-native';
+import { Alert, Animated, RefreshControl } from 'react-native';
 
-import { IMAGE_RATIO, DATA_ENDPOINT, WINDOW_HEIGHT, WINDOW_WIDTH } from '../../constants';
+import { IMAGE_RATIO, WINDOW_HEIGHT, WINDOW_WIDTH } from '../../constants';
+import storage from '../../libs/storage';
 import { colorPrimary } from '../../styles';
 
 import Loader from '../../components/Loader';
@@ -18,12 +19,6 @@ export default class Home extends Component {
     }).isRequired,
   };
 
-  static async fetchEventsByPage(page = 0) {
-    const res = await global.fetch(`${DATA_ENDPOINT}/events?page=${page}`);
-
-    return res.json();
-  }
-
   state = {
     events: [],
     loading: false,
@@ -35,7 +30,7 @@ export default class Home extends Component {
   };
 
   componentDidMount() {
-    this.fetchAndSetInialEvents();
+    this.onFetchAndSetInialEvents();
   }
 
   onEndReached = async () => {
@@ -47,12 +42,15 @@ export default class Home extends Component {
 
     this.setState({ loading: true });
 
-    const newEvents = await Home.fetchEventsByPage(nextPage);
+    const data = await storage.load({
+      id: 'do-not-save',
+      key: 'events',
+    });
 
-    this.setState(({ events }) => ({
-      events: [...events, ...newEvents],
+    this.setState(() => ({
+      events: data.events,
       loading: false,
-      nextPage: newEvents.length === 10 ? nextPage + 1 : null,
+      nextPage: data.nextPage,
     }));
   };
 
@@ -76,10 +74,10 @@ export default class Home extends Component {
     return { length: itemHeight, offset: itemHeight * index, index };
   };
 
-  onRefresh = async () => {
+  onRefresh = () => {
     this.setState({ refreshing: true });
 
-    await this.fetchAndSetInialEvents();
+    this.onFetchAndSetInialEvents();
   };
 
   onItemPress = id => {
@@ -122,15 +120,29 @@ export default class Home extends Component {
     );
   }
 
-  async fetchAndSetInialEvents() {
-    const events = await Home.fetchEventsByPage();
+  onFetchAndSetInialEvents = async () => {
+    try {
+      const { events, nextPage } = await storage.load({
+        key: 'events',
+        syncParams: {
+          refresh: true,
+        },
+      });
 
-    this.setState({
-      events,
-      nextPage: 1,
-      refreshing: false,
-    });
-  }
+      this.setState({
+        events,
+        nextPage,
+        refreshing: false,
+      });
+    } catch (err) {
+      Alert.alert(
+        'Ууупс, ошибка при загрузке ивентов',
+        'Попробовать ещё раз?',
+        [{ text: 'Нет' }, { text: 'Да', onPress: this.onFetchAndSetInialEvents }],
+        { cancelable: false }
+      );
+    }
+  };
 
   keyExtractor = item => item._id;
 
