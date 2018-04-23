@@ -2,9 +2,13 @@
   "expo": {
     "sdkVersion": "26.0.0",
     "name": "Belarusian IT events",
-    "icon": "./src/icon.png",
+    "icon": "./assets/icon.png",
     "version": "1.0.0",
     "slug": "belarusian-it-events",
+    "splash": {
+      "image": "./assets/splash.png",
+      "backgroundColor": "#2c1d17"
+    },
     "ios": {
       "bundleIdentifier": "com.webspace.belarusianitevents"
     },
