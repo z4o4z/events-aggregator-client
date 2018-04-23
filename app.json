@@ -7,7 +7,8 @@
     "slug": "belarusian-it-events",
     "splash": {
       "image": "./assets/splash.png",
-      "backgroundColor": "#2c1d17"
+      "backgroundColor": "#2c1d17",
+      "resizeMode": "cover"
     },
     "ios": {
       "bundleIdentifier": "com.webspace.belarusianitevents"
