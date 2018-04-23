@@ -148,19 +148,19 @@ export default class Event extends Component {
     const { title, address } = this.props.navigation.state.params;
     const { geo, content, parallaxHeight } = this.state;
 
-    console.log(geo);
-
     return (
       <Bacground>
         <Scroll
           width="100%"
           height="100%"
           headerHeight={70}
-          isHeaderFixed
-          useNativeDriver
           onLayout={this.onLayout}
           renderHeader={this.headerRenderer}
+          isHeaderFixed
           parallaxHeight={parallaxHeight}
+          useNativeDriver
+          backgroundScale={2}
+          backgroundScaleOrigin="top"
           renderParallaxBackground={this.parallaxBackgroundRenderer}
           renderParallaxForeground={this.parallaxForegroundRenderer}
           parallaxForegroundScrollSpeed={0.8}
