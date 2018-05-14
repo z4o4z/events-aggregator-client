@@ -8,7 +8,7 @@ import { backgroundColor } from '../../styles';
 
 import Text from '../../components/Text';
 
-export const Bacground = styled.View`
+export const Background = styled.View`
   background-color: ${backgroundColor};
   min-width: 100%;
   min-height: 100%;
@@ -72,4 +72,20 @@ export const Address = Text.extend`
   color: #fff;
   font-size: 16px;
   text-align: right;
+`;
+
+export const ContentHeader = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 0 20px;
+  margin: -15px 5px 0 5px;
+  background-color: #fff;
+  z-index: 2;
+`;
+
+export const StyledText = Text.extend`
+  color: rgb(51, 51, 51);
+  font-size: 12px;
+  font-weight: bold;
 `;

@@ -14,7 +14,7 @@ storiesOf('screens/Event', module)
       navigation={{
         state: {
           params: {
-            id: text('id', '5ac372515bf284001a96eda9'),
+            id: text('id', '5af45b0999c724001a6757f9'),
             src: text(
               'src',
               'https://picsum.photos/600/400?uri=/trening-professional-scrum-master--2?0'

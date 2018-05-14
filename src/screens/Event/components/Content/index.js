@@ -3,7 +3,6 @@ import HTML from 'react-native-render-html';
 import PropTypes from 'prop-types';
 import { MapView } from 'expo';
 
-import Button from '../../../../components/Button';
 import Loader from '../../../../components/Loader';
 
 import { html } from '../../../../styles';
@@ -11,7 +10,7 @@ import { TEXT_TAGS_HASH, MIXED_TAGS_HASH } from '../../../../constants';
 
 import BackgroundImage from '../../../../components/BackgroundImage';
 
-import { Share, Title, WebLink, Header, Wrapper, ImageWrapper, RemovePadding } from './styles';
+import { Title, Wrapper, ImageWrapper, RemovePadding } from './styles';
 
 export default class Content extends PureComponent {
   static propTypes = {
@@ -21,9 +20,7 @@ export default class Content extends PureComponent {
     }).isRequired,
     html: PropTypes.string,
     title: PropTypes.string.isRequired,
-    onShare: PropTypes.func.isRequired,
     onOpenLink: PropTypes.func.isRequired,
-    onOpenInBrowser: PropTypes.func.isRequired,
   };
 
   static defaultProps = {
@@ -108,27 +105,15 @@ export default class Content extends PureComponent {
   };
 
   render() {
-    const { geo, title, html: htmlContent, onShare, onOpenLink, onOpenInBrowser } = this.props;
+    const { geo, title, html: htmlContent, onOpenLink } = this.props;
     const coordinate = {
-      latitude: parseFloat(geo.longitude),
-      longitude: parseFloat(geo.latitude),
+      latitude: parseFloat(geo.latitude),
+      longitude: parseFloat(geo.longitude),
     };
 
     return (
       <Wrapper>
         <Title>{title}</Title>
-
-        {!!htmlContent && (
-          <Header>
-            <Button onPress={onOpenInBrowser}>
-              <WebLink>Открыть в браузере</WebLink>
-            </Button>
-
-            <Button onPress={onShare}>
-              <Share>Поделиться</Share>
-            </Button>
-          </Header>
-        )}
 
         {htmlContent ? (
           <HTML

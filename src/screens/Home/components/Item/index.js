@@ -34,7 +34,7 @@ export default function Item(props) {
   });
 
   return (
-    <Button onPress={() => onPress(id)}>
+    <Button onPress={() => onPress(id)} touchedScale={1.1}>
       <Wrapper height={height} innerRef={this.onRef} onLayout={this.onLayout}>
         <AnimatedBackgroundImage
           src={src}

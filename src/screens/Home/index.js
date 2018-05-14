@@ -10,7 +10,7 @@ import Loader from '../../components/Loader';
 
 import Item from './components/Item';
 
-import { Scroll, Bacground, FooterLoader } from './styles';
+import { Scroll, Background, FooterLoader } from './styles';
 
 export default class Home extends Component {
   static propTypes = {
@@ -30,7 +30,7 @@ export default class Home extends Component {
   };
 
   componentDidMount() {
-    this.onFetchAndSetInialEvents();
+    this.onFetchAndSetInitialEvents();
   }
 
   onEndReached = async () => {
@@ -77,7 +77,7 @@ export default class Home extends Component {
   onRefresh = () => {
     this.setState({ refreshing: true });
 
-    this.onFetchAndSetInialEvents();
+    this.onFetchAndSetInitialEvents(true);
   };
 
   onItemPress = id => {
@@ -120,14 +120,15 @@ export default class Home extends Component {
     );
   }
 
-  onFetchAndSetInialEvents = async () => {
+  onFetchAndSetInitialEvents = async refresh => {
     try {
       const { events, nextPage } = await storage.load({
+        id: refresh ? 'do-not-save' : undefined,
         key: 'events',
-        syncParams: {
-          refresh: true,
-        },
+        syncParams: { refresh },
       });
+
+      // console.log(events);
 
       this.setState({
         events,
@@ -138,7 +139,7 @@ export default class Home extends Component {
       Alert.alert(
         'Ууупс, ошибка при загрузке ивентов',
         'Попробовать ещё раз?',
-        [{ text: 'Нет' }, { text: 'Да', onPress: this.onFetchAndSetInialEvents }],
+        [{ text: 'Нет' }, { text: 'Да', onPress: this.onFetchAndSetInitialEvents }],
         { cancelable: false }
       );
     }
@@ -171,7 +172,7 @@ export default class Home extends Component {
     const { events } = this.state;
 
     return (
-      <Bacground>
+      <Background>
         <Scroll
           data={events}
           onScroll={this.onScroll}
@@ -186,7 +187,7 @@ export default class Home extends Component {
           scrollEventThrottle={16}
           onEndReachedThreshold={1}
         />
-      </Bacground>
+      </Background>
     );
   }
 }

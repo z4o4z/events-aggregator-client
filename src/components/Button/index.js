@@ -64,6 +64,7 @@ class Button extends Component {
         disabled={disabled}
         onPressIn={this.onPressIn}
         onPressOut={this.onPressOut}
+        delayPressIn={100}
         delayPressOut={100}
       >
         <Animated.View style={[animatedStyle, isChildrenSimple ? {} : style]}>

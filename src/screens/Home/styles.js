@@ -6,7 +6,7 @@ import { backgroundColor } from '../../styles';
 
 import Loader from '../../components/Loader';
 
-export const Bacground = styled.View`
+export const Background = styled.View`
   background-color: ${backgroundColor};
   min-width: 100%;
   min-height: 100%;

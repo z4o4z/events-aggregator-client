@@ -1,6 +1,9 @@
 import React, { Fragment, Component } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Share, Linking } from 'react-native';
+import { Calendar, Permissions } from 'expo';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Alert, Share, Linking, StyleSheet } from 'react-native';
+import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider } from 'react-native-popup-menu';
 
 import storage from '../../libs/storage';
 import { IMAGE_RATIO, WINDOW_WIDTH } from '../../constants';
@@ -18,10 +21,16 @@ import {
   Header,
   Address,
   IconBack,
-  Bacground,
+  Background,
   Foreground,
+  StyledText,
+  ContentHeader,
   HeaderBackground,
 } from './styles';
+
+const menuOptionStyles = StyleSheet.create({
+  optionText: { color: 'rgb(51, 51, 51)', padding: 4 },
+});
 
 export default class Event extends Component {
   static propTypes = {
@@ -79,6 +88,20 @@ export default class Event extends Component {
     Linking.openURL(link);
   };
 
+  onAddToCalendar = async () => {
+    const permissionsGranted = await this.grantCalendarPermissions();
+
+    if (!permissionsGranted) {
+      Alert.alert('Нет прав для работы с календарём', [], {
+        cancelable: true,
+      });
+
+      return;
+    }
+
+
+  };
+
   onFetchEvent = async () => {
     const { id } = this.props.navigation.state.params;
 
@@ -89,7 +112,7 @@ export default class Event extends Component {
       });
 
       this.setState({
-        geo: event.geo,
+        geo: event.geo || {},
         link: event.link,
         price: event.price,
         content: event.content,
@@ -158,38 +181,80 @@ export default class Event extends Component {
     );
   };
 
+  grantCalendarPermissions = async () => {
+    const { status } = await Permissions.getAsync(Permissions.CALENDAR);
+
+    if (status === 'granted') {
+      return true;
+    }
+
+    const res = await Permissions.askAsync(Permissions.CALENDAR);
+
+    return res.status === 'granted';
+  };
+
   render() {
     const { title, address } = this.props.navigation.state.params;
     const { geo, content, parallaxHeight } = this.state;
 
     return (
-      <Bacground>
-        <Scroll
-          width="100%"
-          height="100%"
-          headerHeight={70}
-          onLayout={this.onLayout}
-          renderHeader={this.headerRenderer}
-          isHeaderFixed
-          parallaxHeight={parallaxHeight}
-          useNativeDriver
-          backgroundScale={2}
-          backgroundScaleOrigin="top"
-          renderParallaxBackground={this.parallaxBackgroundRenderer}
-          renderParallaxForeground={this.parallaxForegroundRenderer}
-          parallaxForegroundScrollSpeed={0.8}
-        >
-          <Content
-            geo={geo}
-            html={content}
-            title={title}
-            address={address}
-            onShare={this.onShare}
-            onOpenLink={this.onOpenLink}
-            onOpenInBrowser={this.onOpenInBrowser}
-          />
-        </Scroll>
-      </Bacground>
+      <MenuProvider>
+        <Background>
+          <Scroll
+            width="100%"
+            height="100%"
+            headerHeight={70}
+            onLayout={this.onLayout}
+            renderHeader={this.headerRenderer}
+            isHeaderFixed
+            parallaxHeight={parallaxHeight}
+            useNativeDriver
+            backgroundScale={2}
+            backgroundScaleOrigin="top"
+            renderParallaxBackground={this.parallaxBackgroundRenderer}
+            renderParallaxForeground={this.parallaxForegroundRenderer}
+            parallaxForegroundScrollSpeed={0.8}
+          >
+            {!!content && (
+              <ContentHeader>
+                <Button onPress={this.onOpenInBrowser}>
+                  <StyledText>Открыть в браузере</StyledText>
+                </Button>
+
+                <Menu>
+                  <MenuTrigger>
+                    <MaterialCommunityIcons
+                      name="dots-vertical"
+                      size={24}
+                      color="rgb(51, 51, 51)"
+                    />
+                  </MenuTrigger>
+                  <MenuOptions itemPadding={20}>
+                    <MenuOption
+                      text="Поделиться"
+                      onSelect={this.onShare}
+                      customStyles={menuOptionStyles}
+                    />
+                    <MenuOption
+                      text="Добавить в календарь"
+                      onSelect={this.onAddToCalendar}
+                      customStyles={menuOptionStyles}
+                    />
+                  </MenuOptions>
+                </Menu>
+              </ContentHeader>
+            )}
+
+            <Content
+              geo={geo}
+              html={content}
+              title={title}
+              address={address}
+              onOpenLink={this.onOpenLink}
+            />
+          </Scroll>
+        </Background>
+      </MenuProvider>
     );
   }
 }
