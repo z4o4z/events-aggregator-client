@@ -1,12 +1,14 @@
 import React, { Fragment, Component } from 'react';
 import PropTypes from 'prop-types';
-import { Calendar, Permissions } from 'expo';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Alert, Share, Linking, StyleSheet } from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider } from 'react-native-popup-menu';
 
 import storage from '../../libs/storage';
 import { IMAGE_RATIO, WINDOW_WIDTH } from '../../constants';
+
+import calendar from '../../services/calendar';
+import permissions from '../../services/permissions';
 
 import Button from '../../components/Button';
 import DateTime from '../../components/DateTime';
@@ -89,17 +91,13 @@ export default class Event extends Component {
   };
 
   onAddToCalendar = async () => {
-    const permissionsGranted = await this.grantCalendarPermissions();
+    const granted = await permissions.getCalendarPermissions();
 
-    if (!permissionsGranted) {
-      Alert.alert('Нет прав для работы с календарём', [], {
-        cancelable: true,
-      });
-
+    if (!granted) {
       return;
     }
 
-
+    await calendar._findOwnerCalendarId();
   };
 
   onFetchEvent = async () => {
@@ -179,18 +177,6 @@ export default class Event extends Component {
         <Address>{address}</Address>
       </Foreground>
     );
-  };
-
-  grantCalendarPermissions = async () => {
-    const { status } = await Permissions.getAsync(Permissions.CALENDAR);
-
-    if (status === 'granted') {
-      return true;
-    }
-
-    const res = await Permissions.askAsync(Permissions.CALENDAR);
-
-    return res.status === 'granted';
   };
 
   render() {

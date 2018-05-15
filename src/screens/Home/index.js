@@ -136,12 +136,10 @@ export default class Home extends Component {
         refreshing: false,
       });
     } catch (err) {
-      Alert.alert(
-        'Ууупс, ошибка при загрузке ивентов',
-        'Попробовать ещё раз?',
-        [{ text: 'Нет' }, { text: 'Да', onPress: this.onFetchAndSetInitialEvents }],
-        { cancelable: false }
-      );
+      Alert.alert('Ууупс, ошибка при загрузке ивентов', 'Попробовать ещё раз?', [
+        { text: 'Нет' },
+        { text: 'Да', onPress: this.onFetchAndSetInitialEvents },
+      ]);
     }
   };
 
