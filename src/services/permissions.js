@@ -6,11 +6,11 @@ import { IS_IOS } from '../constants';
 class PermissionsService {
   static PERMISSIONS_GRANTED = 'granted';
 
-  getCalendarPermissions() {
-    return this._getPermissions(Permissions.CALENDAR);
+  static getCalendarPermissions() {
+    return PermissionsService._getPermissions(Permissions.CALENDAR);
   }
 
-  async _getPermissions(type) {
+  static async _getPermissions(type) {
     const { status } = await Permissions.getAsync(type);
 
     if (status === PermissionsService.PERMISSIONS_GRANTED) {
@@ -20,24 +20,23 @@ class PermissionsService {
     const res = await Permissions.askAsync(type);
 
     if (res.status !== PermissionsService.PERMISSIONS_GRANTED) {
-      this._openSettings('календарём');
+      PermissionsService._openSettings('календарём');
       return false;
     }
 
     return true;
   }
 
-  _openSettings(postfix) {
+  static _openSettings(postfix) {
     Alert.alert(
       `Нет прав для работы с ${postfix}`,
       'Открыть настройки?',
-      [{ text: 'Нет' }, { text: 'Да', onPress: this._onOpenSettings }],
+      [{ text: 'Нет' }, { text: 'Да', onPress: PermissionsService._onOpenSettings }],
       { cancelable: false }
     );
   }
 
-  // eslint-disable-next-line  class-methods-use-this
-  _onOpenSettings = () => {
+  static _onOpenSettings = () => {
     if (IS_IOS) {
       Linking.openURL('app-settings:');
     } else {
@@ -48,4 +47,4 @@ class PermissionsService {
   };
 }
 
-export default new PermissionsService();
+export default PermissionsService;

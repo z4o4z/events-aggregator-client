@@ -49,30 +49,22 @@ export const HeaderBackground = Animated.createAnimatedComponent(styled.View`
   background-color: ${backgroundColor};
 `);
 
-export const Foreground = styled.View`
+export const Price = Animated.createAnimatedComponent(Text.extend`
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 70px;
   right: 15px;
-  bottom: 30;
-  align-items: flex-end;
-  justify-content: flex-end;
-  z-index: -1;
-`;
-
-export const Price = Text.extend`
-  position: absolute;
-  top: 45px;
-  right: 0px;
   color: #fff;
   font-size: 16px;
-`;
+`);
 
-export const Address = Text.extend`
+export const Address = Animated.createAnimatedComponent(Text.extend`
+  position: absolute;
+  bottom: 30px;
+  right: 15px;
   color: #fff;
   font-size: 16px;
   text-align: right;
-`;
+`);
 
 export const ContentHeader = styled.View`
   flex-direction: row;

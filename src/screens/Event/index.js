@@ -7,8 +7,8 @@ import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider } from 'react-
 import storage from '../../libs/storage';
 import { IMAGE_RATIO, WINDOW_WIDTH } from '../../constants';
 
-import calendar from '../../services/calendar';
-import permissions from '../../services/permissions';
+import Calendar from '../../services/calendar';
+import Permissions from '../../services/permissions';
 
 import Button from '../../components/Button';
 import DateTime from '../../components/DateTime';
@@ -24,11 +24,12 @@ import {
   Address,
   IconBack,
   Background,
-  Foreground,
   StyledText,
   ContentHeader,
   HeaderBackground,
 } from './styles';
+
+const headerHeight = 70;
 
 const menuOptionStyles = StyleSheet.create({
   optionText: { color: 'rgb(51, 51, 51)', padding: 4 },
@@ -58,6 +59,7 @@ export default class Event extends Component {
     link: null,
     price: null,
     content: null,
+    parallaxWidth: WINDOW_WIDTH,
     parallaxHeight: WINDOW_WIDTH * IMAGE_RATIO,
   };
 
@@ -67,6 +69,7 @@ export default class Event extends Component {
 
   onLayout = ({ nativeEvent: { layout: { width } } }) => {
     this.setState({
+      parallaxWidth: width,
       parallaxHeight: width * IMAGE_RATIO,
     });
   };
@@ -91,13 +94,32 @@ export default class Event extends Component {
   };
 
   onAddToCalendar = async () => {
-    const granted = await permissions.getCalendarPermissions();
+    const granted = await Permissions.getCalendarPermissions();
 
     if (!granted) {
       return;
     }
 
-    await calendar._findOwnerCalendarId();
+    const { link } = this.state;
+    const {
+      title,
+      address,
+      startTime,
+      startDate,
+      finishTime,
+      finishDate,
+    } = this.props.navigation.state.params;
+
+    const notes = `Адресс: ${address}\nСсылка: ${link}`;
+
+    await Calendar.addEvent({
+      title,
+      notes,
+      startTime,
+      startDate,
+      finishTime,
+      finishDate,
+    });
   };
 
   onFetchEvent = async () => {
@@ -156,26 +178,46 @@ export default class Event extends Component {
     );
   };
 
-  parallaxBackgroundRenderer = () => {
-    const { src } = this.props.navigation.state.params;
+  parallaxBackgroundRenderer = ({ animatedValue }) => {
+    const { src, address } = this.props.navigation.state.params;
+    const { price, parallaxWidth, parallaxHeight } = this.state;
+
+    const priceTranslateY = animatedValue.interpolate({
+      inputRange: [-parallaxHeight, 0, parallaxHeight],
+      outputRange: [-parallaxHeight / 4, 0, parallaxHeight / 5],
+      extrapolate: 'clamp',
+    });
+
+    const translateX = animatedValue.interpolate({
+      inputRange: [-parallaxHeight, 0],
+      outputRange: [parallaxWidth * 2, 0],
+      extrapolate: 'clamp',
+    });
+
+    const headerWithPriceHeight = parallaxHeight - headerHeight - 70;
+    const addressTranslateY = animatedValue.interpolate({
+      inputRange: [-parallaxHeight, 0, headerWithPriceHeight],
+      outputRange: [-parallaxHeight / 4, 0, -headerWithPriceHeight / 1.4],
+      extrapolate: 'clamp',
+    });
 
     return (
       <Fragment>
         <BackgroundImage src={src} />
         <BackgroundColor color="rgba(93, 83, 73, 0.5)" />
+
+        <Price style={{ transform: [{ translateY: priceTranslateY }, { translateX }] }}>
+          {price}
+        </Price>
+
+        <Address
+          style={{
+            transform: [{ translateY: addressTranslateY }, { translateX }],
+          }}
+        >
+          {address}
+        </Address>
       </Fragment>
-    );
-  };
-
-  parallaxForegroundRenderer = () => {
-    const { price } = this.state;
-    const { address } = this.props.navigation.state.params;
-
-    return (
-      <Foreground>
-        <Price>{price}</Price>
-        <Address>{address}</Address>
-      </Foreground>
     );
   };
 
@@ -189,7 +231,7 @@ export default class Event extends Component {
           <Scroll
             width="100%"
             height="100%"
-            headerHeight={70}
+            headerHeight={headerHeight}
             onLayout={this.onLayout}
             renderHeader={this.headerRenderer}
             isHeaderFixed
