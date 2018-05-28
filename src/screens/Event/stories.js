@@ -14,17 +14,15 @@ storiesOf('screens/Event', module)
       navigation={{
         state: {
           params: {
-            id: text('id', '5af45b0999c724001a6757f9'),
+            id: text('id', '5b0c13a146ea47001ada9c56'),
             src: text(
               'src',
               'https://picsum.photos/600/400?uri=/trening-professional-scrum-master--2?0'
             ),
-            title: text('title', 'Тренинг Professional Scrum Master'),
+            title: text('title', 'Обучение английскому в онлайн-школе Skyeng'),
             address: text('address', 'Минск.'),
-            startTime: text('startTime', '10:00'),
-            startDate: text('startDate', '2018-05-07T00:00:00.000Z'),
-            finishTime: text('finishTime', '18:00'),
-            finishDate: text('finishDate', '2018-05-08T00:00:00.000Z'),
+            startDate: text('startDate', '2018-04-30T21:00:00.000Z'),
+            finishDate: text('finishDate', '2018-05-30T21:00:00.000Z'),
           },
         },
         goBack: linkTo('screens/Home', 'base'),

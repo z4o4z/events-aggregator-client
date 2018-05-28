@@ -4,9 +4,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Alert, Share, Linking, StyleSheet } from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider } from 'react-native-popup-menu';
 
-import storage from '../../libs/storage';
 import { IMAGE_RATIO, WINDOW_WIDTH } from '../../constants';
 
+import storage from '../../services/storage';
 import Calendar from '../../services/calendar';
 import Permissions from '../../services/permissions';
 
@@ -44,9 +44,7 @@ export default class Event extends Component {
           src: PropTypes.string.isRequired,
           title: PropTypes.string.isRequired,
           address: PropTypes.string,
-          startTime: PropTypes.string,
           startDate: PropTypes.string.isRequired,
-          finishTime: PropTypes.string,
           finishDate: PropTypes.string.isRequired,
         }).isRequired,
       }).isRequired,
@@ -101,23 +99,14 @@ export default class Event extends Component {
     }
 
     const { link } = this.state;
-    const {
-      title,
-      address,
-      startTime,
-      startDate,
-      finishTime,
-      finishDate,
-    } = this.props.navigation.state.params;
+    const { title, address, startDate, finishDate } = this.props.navigation.state.params;
 
     const notes = `Адресс: ${address}\nСсылка: ${link}`;
 
     await Calendar.addEvent({
       title,
       notes,
-      startTime,
       startDate,
-      finishTime,
       finishDate,
     });
   };
@@ -152,7 +141,7 @@ export default class Event extends Component {
 
   headerRenderer = ({ height, animatedValue }) => {
     const { parallaxHeight } = this.state;
-    const { startTime, startDate, finishTime, finishDate } = this.props.navigation.state.params;
+    const { startDate, finishDate } = this.props.navigation.state.params;
 
     const opacity = animatedValue.interpolate({
       inputRange: [0, parallaxHeight - height],
@@ -168,12 +157,7 @@ export default class Event extends Component {
           <IconBack />
         </Button>
 
-        <DateTime
-          startDate={startDate}
-          startTime={startTime}
-          finishTime={finishTime}
-          finishDate={finishDate}
-        />
+        <DateTime startDate={startDate} finishDate={finishDate} />
       </Header>
     );
   };

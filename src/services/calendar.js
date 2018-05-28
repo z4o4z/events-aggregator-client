@@ -17,13 +17,25 @@ class CalendarService {
           'Нет доступного календаря для запси. Пожалуйста, создайте календарь и попробуйте заново',
           [{ text: 'Ok' }]
         );
+
+        return;
+      }
+
+      const similarEvent = await CalendarService._findSimilarEvent(calendar.id, event);
+
+      if (similarEvent) {
+        Alert.alert('Событие уже добавлено!', 'Данное событие уже есть в календаре', [
+          { text: 'Ok' },
+        ]);
+
+        return;
       }
 
       await CalendarService._createEvent(calendar.id, event);
 
       Alert.alert(
         'Событие успешно добавлено!',
-        `Событие добавленно в ${calendar.title} календарь`,
+        `Данное событие добавленно в ${calendar.title} календарь`,
         [{ text: 'Ok' }]
       );
     } catch (err) {
@@ -51,13 +63,17 @@ class CalendarService {
     return ownerCalendar || editableCalendars[0];
   }
 
-  static async _createEvent(id, { title, notes, startDate, startTime, finishDate, finishTime }) {
-    const absoluteStartDate = CalendarService._getDate(startDate, startTime);
+  static async _findSimilarEvent(calendarId, { title, startDate, finishDate }) {
+    const events = await Calendar.getEventsAsync([calendarId], startDate, finishDate);
 
+    return events.find(event => event.title === title);
+  }
+
+  static async _createEvent(id, { title, notes, startDate, finishDate }) {
     const alarms = [
       {
         method: AlarmMethod.ALERT,
-        absoluteDate: absoluteStartDate,
+        absoluteDate: startDate,
         relativeOffset: -40,
       },
     ];
@@ -65,7 +81,7 @@ class CalendarService {
     if (startDate !== finishDate) {
       alarms.push({
         method: AlarmMethod.ALERT,
-        absoluteDate: absoluteStartDate,
+        absoluteDate: startDate,
         relativeOffset: -1440,
       });
     }
@@ -74,14 +90,10 @@ class CalendarService {
       title,
       notes,
       alarms,
-      endDate: CalendarService._getDate(finishDate, finishTime),
+      endDate: finishDate,
       timeZone: `${moment(startDate).utcOffset()}`,
-      startDate: absoluteStartDate,
+      startDate,
     });
-  }
-
-  static _getDate(date, time) {
-    return moment(`${moment(date).format('MM-DD-YYYY')} ${time}`, 'MM-DD-YYYY HH:mm').toDate();
   }
 }
 

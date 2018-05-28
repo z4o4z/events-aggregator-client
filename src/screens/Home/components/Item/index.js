@@ -19,9 +19,7 @@ export default function Item(props) {
     index,
     height,
     onPress,
-    startTime,
     startDate,
-    finishTime,
     finishDate,
     windowHeight,
     animatedScrollY,
@@ -43,12 +41,7 @@ export default function Item(props) {
         <BackgroundColor color="rgba(93, 83, 73, 0.5)" />
 
         <Header>
-          <DateTime
-            startDate={startDate}
-            startTime={startTime}
-            finishTime={finishTime}
-            finishDate={finishDate}
-          />
+          <DateTime startDate={startDate} finishDate={finishDate} />
         </Header>
 
         <Footer>
@@ -66,15 +59,8 @@ Item.propTypes = {
   index: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   onPress: PropTypes.func.isRequired,
-  startTime: PropTypes.string,
   startDate: PropTypes.string.isRequired,
-  finishTime: PropTypes.string,
   finishDate: PropTypes.string.isRequired,
   windowHeight: PropTypes.number.isRequired,
   animatedScrollY: PropTypes.instanceOf(Animated.Value).isRequired,
-};
-
-Item.defaultProps = {
-  startTime: '',
-  finishTime: '',
 };

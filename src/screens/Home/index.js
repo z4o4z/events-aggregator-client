@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { Alert, Animated, RefreshControl } from 'react-native';
 
 import { IMAGE_RATIO, WINDOW_HEIGHT, WINDOW_WIDTH } from '../../constants';
-import storage from '../../libs/storage';
+
+import storage from '../../services/storage';
+
 import { colorPrimary } from '../../styles';
 
 import Loader from '../../components/Loader';
@@ -90,9 +92,7 @@ export default class Home extends Component {
       src: item.hero_image_url,
       title: item.title,
       address: item.address,
-      startTime: item.start_time,
       startDate: item.start_date,
-      finishTime: item.finish_time,
       finishDate: item.finish_date,
     });
   };
@@ -156,9 +156,7 @@ export default class Home extends Component {
         title={item.title}
         height={itemHeight}
         onPress={this.onItemPress}
-        startTime={item.start_time}
         startDate={item.start_date}
-        finishTime={item.finish_time}
         finishDate={item.finish_date}
         windowHeight={windowHeight}
         animatedScrollY={this.state.animatedScrollY}
