@@ -3,14 +3,17 @@ import PropTypes from 'prop-types';
 import { Alert, Animated, RefreshControl } from 'react-native';
 
 import { IMAGE_RATIO, WINDOW_HEIGHT, WINDOW_WIDTH } from '../../constants';
+import { springAnimation } from '../../helpers';
 
-import storage from '../../services/storage';
+import storage, { getEventsKey } from '../../services/storage';
 
 import { colorPrimary } from '../../styles';
 
 import Loader from '../../components/Loader';
 
 import Item from './components/Item';
+import Header from './components/Header';
+import Filters from './components/Filters';
 
 import { Scroll, Background, FooterLoader } from './styles';
 
@@ -23,20 +26,33 @@ export default class Home extends Component {
 
   state = {
     events: [],
+    search: '',
     loading: false,
     nextPage: null,
+    startDate: null,
+    finishDate: null,
     itemHeight: WINDOW_WIDTH * IMAGE_RATIO,
     refreshing: false,
+    filterOpened: false,
     windowHeight: WINDOW_HEIGHT,
     animatedScrollY: new Animated.Value(0),
+    filterOpenedAnimatedValue: new Animated.Value(0),
   };
 
   componentDidMount() {
     this.onFetchAndSetInitialEvents();
   }
 
+  onToggleFilter = () => {
+    const { filterOpened, filterOpenedAnimatedValue } = this.state;
+
+    this.setState({ filterOpened: !filterOpened }, () =>
+      springAnimation(filterOpenedAnimatedValue, { toValue: filterOpened ? 0 : 1 })
+    );
+  };
+
   onEndReached = async () => {
-    const { loading, refreshing, nextPage } = this.state;
+    const { search, loading, refreshing, nextPage, startDate, finishDate } = this.state;
 
     if (loading || refreshing || nextPage === null) {
       return;
@@ -46,7 +62,8 @@ export default class Home extends Component {
 
     const data = await storage.load({
       id: 'do-not-save',
-      key: 'events',
+      key: getEventsKey(search, startDate, finishDate),
+      syncParams: { search, startDate, finishDate },
     });
 
     this.setState(() => ({
@@ -97,35 +114,26 @@ export default class Home extends Component {
     });
   };
 
-  onGetFooter() {
-    const { nextPage } = this.state;
+  onSearch = search => {
+    this.setState({ search }, this.onRefresh);
+  };
 
-    if (nextPage === null) {
-      return null;
-    }
+  onChangeStartDate = async startDate => {
+    this.setState({ startDate }, this.onRefresh);
+  };
 
-    return <FooterLoader />;
-  }
-
-  onGetRefreshControl() {
-    const { refreshing } = this.state;
-
-    return (
-      <RefreshControl
-        colors={[colorPrimary]}
-        tintColor={colorPrimary}
-        onRefresh={this.onRefresh}
-        refreshing={refreshing}
-      />
-    );
-  }
+  onChangeFinishDate = finishDate => {
+    this.setState({ finishDate }, this.onRefresh);
+  };
 
   onFetchAndSetInitialEvents = async refresh => {
+    const { search, startDate, finishDate } = this.state;
+
     try {
       const { events, nextPage } = await storage.load({
         id: refresh ? 'do-not-save' : undefined,
-        key: 'events',
-        syncParams: { refresh },
+        key: getEventsKey(search, startDate, finishDate),
+        syncParams: { search, refresh, startDate, finishDate },
       });
 
       // console.log(events);
@@ -143,10 +151,46 @@ export default class Home extends Component {
     }
   };
 
+  getRefreshControl() {
+    const { refreshing } = this.state;
+
+    return (
+      <RefreshControl
+        colors={[colorPrimary]}
+        tintColor={colorPrimary}
+        onRefresh={this.onRefresh}
+        refreshing={refreshing}
+      />
+    );
+  }
+
+  getFooter() {
+    const { nextPage } = this.state;
+
+    if (nextPage === null) {
+      return null;
+    }
+
+    return <FooterLoader />;
+  }
+
+  getHeader() {
+    const { animatedScrollY, filterOpenedAnimatedValue } = this.state;
+
+    return (
+      <Header
+        onSearch={this.onSearch}
+        onToggleFilter={this.onToggleFilter}
+        animatedScrollY={animatedScrollY}
+        filterOpenedAnimatedValue={filterOpenedAnimatedValue}
+      />
+    );
+  }
+
   keyExtractor = item => item._id;
 
   itemRenderer = ({ item, index }) => {
-    const { itemHeight, windowHeight } = this.state;
+    const { itemHeight, windowHeight, animatedScrollY } = this.state;
 
     return (
       <Item
@@ -159,13 +203,13 @@ export default class Home extends Component {
         startDate={item.start_date}
         finishDate={item.finish_date}
         windowHeight={windowHeight}
-        animatedScrollY={this.state.animatedScrollY}
+        animatedScrollY={animatedScrollY}
       />
     );
   };
 
   render() {
-    const { events } = this.state;
+    const { events, filterOpened, filterOpenedAnimatedValue } = this.state;
 
     return (
       <Background>
@@ -177,11 +221,21 @@ export default class Home extends Component {
           keyExtractor={this.keyExtractor}
           onEndReached={this.onEndReached}
           getItemLayout={this.onGetItemLayout}
-          refreshControl={this.onGetRefreshControl()}
+          refreshControl={this.getRefreshControl()}
           ListEmptyComponent={Loader}
-          ListFooterComponent={this.onGetFooter()}
+          ListHeaderComponent={this.getHeader()}
+          stickyHeaderIndices={[0]}
+          ListFooterComponent={this.getFooter()}
           scrollEventThrottle={16}
           onEndReachedThreshold={1}
+        />
+
+        <Filters
+          opened={filterOpened}
+          onToggle={this.onToggleFilter}
+          onChangeStartDate={this.onChangeStartDate}
+          onChangeFinishDate={this.onChangeFinishDate}
+          openedAnimatedValue={filterOpenedAnimatedValue}
         />
       </Background>
     );

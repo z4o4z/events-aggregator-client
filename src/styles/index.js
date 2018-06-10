@@ -2,6 +2,16 @@ export const colorPrimary = '#DC734A';
 
 export const backgroundColor = '#2c1d17';
 
+export const header = {
+  height: 62,
+  backgroundColor,
+};
+
+export const filter = {
+  height: 100,
+  backgroundColor,
+};
+
 export const html = {
   baseFont: {
     color: 'rgb(51, 51, 51)',

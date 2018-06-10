@@ -9,5 +9,6 @@ import '../../src/components/BackgroundImage/stories';
 // screens
 import '../../src/screens/Home/stories';
 import '../../src/screens/Home/components/Item/stories';
+import '../../src/screens/Home/components/Header/stories';
 import '../../src/screens/Event/stories';
 import '../../src/screens/Event/components/Content/stories';

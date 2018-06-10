@@ -1,5 +1,5 @@
-import Expo from 'expo';
 import styled from 'styled-components';
+import { Constants } from 'expo';
 import { Animated, FlatList } from 'react-native';
 
 import { backgroundColor } from '../../styles';
@@ -18,7 +18,7 @@ export const Scroll = styled(Animated.createAnimatedComponent(FlatList)).attrs({
     minHeight: '100%',
   },
 })`
-  margin-top: ${Expo.Constants.statusBarHeight}px;
+  margin-top: ${Constants.statusBarHeight}px;
 `;
 
 export const FooterLoader = Loader.extend`

@@ -4,6 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Alert, Share, Linking, StyleSheet } from 'react-native';
 import { Menu, MenuOptions, MenuOption, MenuTrigger, MenuProvider } from 'react-native-popup-menu';
 
+import { header } from '../../styles';
 import { IMAGE_RATIO, WINDOW_WIDTH } from '../../constants';
 
 import storage from '../../services/storage';
@@ -28,8 +29,6 @@ import {
   ContentHeader,
   HeaderBackground,
 } from './styles';
-
-const headerHeight = 70;
 
 const menuOptionStyles = StyleSheet.create({
   optionText: { color: 'rgb(51, 51, 51)', padding: 4 },
@@ -178,7 +177,7 @@ export default class Event extends Component {
       extrapolate: 'clamp',
     });
 
-    const headerWithPriceHeight = parallaxHeight - headerHeight - 70;
+    const headerWithPriceHeight = parallaxHeight - header.height - 70;
     const addressTranslateY = animatedValue.interpolate({
       inputRange: [-parallaxHeight, 0, headerWithPriceHeight],
       outputRange: [-parallaxHeight / 4, 0, -headerWithPriceHeight / 1.4],
@@ -215,7 +214,7 @@ export default class Event extends Component {
           <Scroll
             width="100%"
             height="100%"
-            headerHeight={headerHeight}
+            headerHeight={header.height}
             onLayout={this.onLayout}
             renderHeader={this.headerRenderer}
             isHeaderFixed

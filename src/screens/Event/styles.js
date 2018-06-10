@@ -1,15 +1,16 @@
-import Expo from 'expo';
 import styled from 'styled-components';
 import { Animated } from 'react-native';
+import { Constants } from 'expo';
 import ParallaxScroll from '@monterosa/react-native-parallax-scroll';
 import { MaterialIcons } from '@expo/vector-icons';
 
-import { backgroundColor } from '../../styles';
+import { header, backgroundColor } from '../../styles';
 
 import Text from '../../components/Text';
 
 export const Background = styled.View`
   background-color: ${backgroundColor};
+  padding-top: ${Constants.statusBarHeight}px;
   min-width: 100%;
   min-height: 100%;
 `;
@@ -20,8 +21,7 @@ export const Scroll = styled(ParallaxScroll).attrs({
     minHeight: '100%',
   },
 })`
-  margin-top: ${Expo.Constants.statusBarHeight}px;
-  margin-bottom: -${Expo.Constants.statusBarHeight}px;
+  overflow: hidden;
   background-color: ${backgroundColor};
 `;
 
@@ -46,7 +46,7 @@ export const HeaderBackground = Animated.createAnimatedComponent(styled.View`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: ${backgroundColor};
+  background-color: ${header.backgroundColor};
 `);
 
 export const Price = Animated.createAnimatedComponent(Text.extend`
